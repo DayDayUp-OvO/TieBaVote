@@ -51,7 +51,7 @@ class Tieba():
             # print(res)
             etree_html = etree.HTML(res.content.decode("utf-8"))
             pid_list = etree_html.xpath(
-                '//div[@class="l_post j_l_post l_post_bright  "]/@data-pid')
+                '//div[@class="l_post l_post_bright j_l_post clearfix  "]/@data-pid')
             for pid in pid_list:
                 text = etree_html.xpath(
                     "//div[@id='post_content_{}']/text()".format(pid))[0]
@@ -84,7 +84,7 @@ class Tieba():
             total_pn = 1
 
         name_list = []
-        re_filter = "[0-9]+"
+        re_filter = "-?[025]{1}"
         for pn in range(1, total_pn + 1):
             pn_res = self.getUrl(c_url + "&pn=" + str(pn))
             pn_etree_html = etree.HTML(pn_res.content.decode("utf-8"))
@@ -99,7 +99,7 @@ class Tieba():
                     try:
                         soure = int(re.findall(re_filter, text)[0])
                         # print(soure)
-                        if 0 <= soure <= 10:
+                        if soure in [-5, -2, 0, 2, 5]:
                             name_list.append(lzl.xpath("a/@username"))
                             total_soure += soure
                     except:
@@ -142,10 +142,6 @@ class Tieba():
         print("统计完成，文件已生成在当前路径的文件夹下\n路径：" + os.getcwd() + "\统计.xls")
 
 
-while True:
-    try:
-        get_id = eval(input("请输入需要统计的帖子id：\n"))
-        tb = Tieba(str(get_id))
-        tb.execute()
-    except:
-        print("发生异常，请重试！")
+get_id = eval(input("请输入需要统计的帖子id：\n"))
+tb = Tieba(str(get_id))
+tb.execute()
