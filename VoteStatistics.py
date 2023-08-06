@@ -11,7 +11,7 @@ class Tieba():
         self.tid = tie_serialNumber
         # 帖子链接
         self.tie_url = "https://tieba.baidu.com/p/" + \
-            self.tid + "?see_lz=1&pn={}"
+                       self.tid + "?see_lz=1&pn={}"
         # 设置请求头
         self.headers = {
             "Connection": "close",
@@ -39,7 +39,7 @@ class Tieba():
         try:
             end_url = etree.HTML(res.content.decode(
                 "utf-8")).xpath("//a[contains(string(), '尾页')]/@href")[0]
-        # 不知道为啥，这里爬到的是实际看到页数的两倍，但不能/2
+            # 不知道为啥，这里爬到的是实际看到页数的两倍，但不能/2
             total_pn = int(int(end_url.split("pn=")[1]))
         except IndexError:
             total_pn = 1
@@ -84,7 +84,7 @@ class Tieba():
             total_pn = 1
 
         name_list = []
-        re_filter = "-?[025]{1}"
+        re_filter = "[0-9]{1, 1}"
         for pn in range(1, total_pn + 1):
             pn_res = self.getUrl(c_url + "&pn=" + str(pn))
             pn_etree_html = etree.HTML(pn_res.content.decode("utf-8"))
@@ -99,7 +99,7 @@ class Tieba():
                     try:
                         soure = int(re.findall(re_filter, text)[0])
                         # print(soure)
-                        if soure in [-5, -2, 0, 2, 5]:
+                        if 1 <= soure <= 10:
                             name_list.append(lzl.xpath("a/@username"))
                             total_soure += soure
                     except:
